@@ -1,0 +1,62 @@
+name: Post to Instagram
+
+on:
+  schedule:
+    - cron: "7,37 * * * *"   # checks twice an hour (GitHub may run it a few minutes late)
+  workflow_dispatch:          # lets you press "Run workflow" by hand
+
+permissions:
+  contents: write             # needed to save prepared posts and the posted log
+
+concurrency:
+  group: instagram-autopost
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Prepare upcoming posts (convert photos, write AI captions, draw graphics)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SHEET_CSV_URL: ${{ secrets.SHEET_CSV_URL }}
+        run: python autopost.py prepare
+
+      - name: Save prepared posts so Instagram can fetch the images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add generated
+          if ! git diff --cached --quiet; then
+            git commit -m "Prepare upcoming Instagram posts"
+            git push
+          fi
+
+      - name: Publish posts that are due
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SHEET_CSV_URL: ${{ secrets.SHEET_CSV_URL }}
+        run: |
+          # Point Instagram at the exact saved version of the images
+          export MEDIA_BASE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/$(git rev-parse HEAD)"
+          python autopost.py publish
+
+      - name: Save the posted log
+        if: always()
+        run: |
+          git add posted.json generated
+          if ! git diff --cached --quiet; then
+            git commit -m "Update Instagram post log"
+            git pull --rebase
+            git push
+          fi

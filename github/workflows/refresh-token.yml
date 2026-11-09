@@ -1,0 +1,27 @@
+name: Refresh Instagram token
+
+# Instagram tokens last 60 days. This renews yours on the 1st and 15th of every month.
+on:
+  schedule:
+    - cron: "23 14 1,15 * *"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Get a fresh token and save it
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          python autopost.py refresh-token > new_token.txt
+          echo "::add-mask::$(cat new_token.txt)"
+          gh secret set IG_ACCESS_TOKEN --repo "$GITHUB_REPOSITORY" < new_token.txt
+          rm new_token.txt
+          echo "Token refreshed."

@@ -1,0 +1,7 @@
+id,post_at,type,media,caption,topic,graphic_text,alt_text
+example-photo,2026-11-20 09:30,image,example-photo.jpg,"Fall colours on the morning walk 🍁 What's your favourite season in Ontario?",,,A tree-lined path with orange leaves
+example-ai-caption,2026-11-22 12:00,image,example-photo.jpg,,why plain-language policy writing matters,,
+example-graphic,2026-11-24 08:15,image,,,,"Good policy is clear policy: if people can't follow it, it doesn't work.",
+example-full-auto,2026-11-26 08:15,image,,,"one quick tip for reading a new regulation",,
+example-carousel,2026-11-28 10:00,carousel,example-photo.jpg|example-wide.jpg,,three things I learned this month,,
+example-story,2026-11-29 18:00,story,,,,"New post is up — tap my profile to read it",

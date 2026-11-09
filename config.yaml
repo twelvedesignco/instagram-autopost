@@ -1,0 +1,27 @@
+# ---- Settings for your Instagram auto-poster -------------------------------
+
+timezone: America/Toronto     # times in your schedule are read in this zone
+
+# How the AI should write captions and graphics. Describe your account, audience,
+# tone, words to avoid, emoji yes/no, a sign-off, a call to action, etc.
+brand_voice: |
+  Account for an Ontario policy and regulatory professional.
+  Audience: professionals interested in policy, compliance and governance.
+  Tone: warm, smart and plain-spoken. Short paragraphs. At most one emoji.
+  Never give legal advice; frame things as general information.
+
+max_hashtags: 5               # Instagram now allows up to 5 hashtags per post
+
+# Look of the automatic text graphics
+graphic:
+  background: "#1F3A5F"
+  text_color: "#FFFFFF"
+  accent: "#F2B134"
+  footer: "@yourhandle"       # small text at the bottom; set to "" for none
+  font: ""                    # optional: path to a .ttf file in this folder, e.g. fonts/MyFont.ttf
+
+lead_hours: 24      # AI captions/graphics are made this many hours ahead so you can review them
+max_late_hours: 24  # if a post is missed by more than this (e.g. outage), skip it instead of posting late
+
+api_version: v25.0
+ai_model: claude-sonnet-5-5
